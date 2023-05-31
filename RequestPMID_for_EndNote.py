@@ -96,7 +96,7 @@ def on_drop(event):
         output_file = os.path.splitext (output_file) [0]
         output_path = os.path.join(script_dir, output_file+ "_output.ris")
         print(output_path)
-        with open(output_path, "w") as f:
+        with open(output_path, "w",encoding= 'utf-8') as f:
             for pubmed_id in pubmed_ids:
                 article_soup = fetch_pubmed_article(pubmed_id)
                 
