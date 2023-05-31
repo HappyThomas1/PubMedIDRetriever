@@ -8,6 +8,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 from tkinterdnd2 import TkinterDnD
+from requests.exceptions import RequestException
 
 
 def extract_arabic_numerals(docx_path):
@@ -22,10 +23,32 @@ def extract_arabic_numerals(docx_path):
     return arabic_numerals
 
 def fetch_pubmed_article(pubmed_id):
-    url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id={pubmed_id}&retmode=xml"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, "xml")
-    return soup
+    try:
+        url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id={pubmed_id}&retmode=xml"
+        response = requests.get(url)
+        
+        # ステータスコードが200以外の場合はエラーを発生させます
+        if response.status_code != 200:
+            raise ValueError(f"PubMed ID: {pubmed_id} not found.")
+        
+        soup = BeautifulSoup(response.content, "xml")
+        
+        # 応答が空であるか、あるいは特定の要素（例えば'PubmedArticle'）が存在しない場合はエラーを発生させます
+        if not soup or not soup.find('PubmedArticle'):
+            raise ValueError(f"PubMed ID: {pubmed_id} not found or response not as expected.")
+        
+        return soup
+
+    except RequestException as e:
+        print(f"Error occurred while fetching the data: {e}")
+        return None
+
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return None
+
+
+
 
 def convert_to_ris(soup, pubmed_id):
     ris = "TY  - JOUR\n"
@@ -76,12 +99,17 @@ def on_drop(event):
         with open(output_path, "w") as f:
             for pubmed_id in pubmed_ids:
                 article_soup = fetch_pubmed_article(pubmed_id)
+                
+                # If article_soup is None, skip this pubmed_id
+                if article_soup is None:
+                    print(f"Skipping PubMed ID: {pubmed_id} due to an error while fetching the data.")
+                    continue
+
                 ris = convert_to_ris(article_soup, pubmed_id)
                 f.write(ris)
         print(f"PubMed IDs extracted and output.ris file generated.")
     else:
         print("Invalid file format. Please drop a .docx file.")
-        
 
 
 def main():
