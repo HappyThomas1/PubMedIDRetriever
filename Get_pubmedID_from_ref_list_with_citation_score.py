@@ -15,8 +15,6 @@ opencitations_api = "https://opencitations.net/index/coci/api/v1/citations/"
 # メールアドレスを設定してください（Entrezの利用条件）
 Entrez.email = os.environ.get("EMAIL_ADDRESS")
 
-print(requests.certs.where() +"\n")
-
 
 def get_paper_title_and_doi(pmid):
     # pmidが数字出ない場合は、"Error"を返す
