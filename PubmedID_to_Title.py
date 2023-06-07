@@ -5,7 +5,7 @@ import time
 
 # Your email here.
 # Entrez requires you to specify your email address with each request.
-Entrez.email = "hikobayashi.md@gmail.com"
+Entrez.email = os.environ.get("EMAIL_ADDRESS")
 
 def get_title_from_pubmed_id(pubmed_id):
     max_retries = 3

@@ -9,12 +9,12 @@ import time
 
 # Your email here.
 # Entrez requires you to specify your email address with each request.
-Entrez.email = "hikobayashi.md@gmail.com"
+Entrez.email = os.environ.get("EMAIL_ADDRESS")
 
-def get_pubmed_id_from_title(title):
-    handle = Entrez.esearch(db="pubmed", term=title)
-    record = Entrez.read(handle)
-    return record["IdList"][0]  # Returns the first matching PubMed ID
+#def get_pubmed_id_from_title(title):
+#    handle = Entrez.esearch(db="pubmed", term=title)
+#    record = Entrez.read(handle)
+#    return record["IdList"][0]  # Returns the first matching PubMed ID
 
 def normalize_title(title):
     # Unescape HTML markup

@@ -13,7 +13,7 @@ crossref_api = "https://api.crossref.org/works/"
 opencitations_api = "https://opencitations.net/index/coci/api/v1/citations/"
 
 # メールアドレスを設定してください（Entrezの利用条件）
-Entrez.email = "hikobayashi.md@gmail.com"
+Entrez.email = os.environ.get("EMAIL_ADDRESS")
 
 print(requests.certs.where() +"\n")
 
