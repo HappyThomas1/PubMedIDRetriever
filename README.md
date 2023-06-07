@@ -7,6 +7,8 @@ As the program use ChatGPT to extract the title of the paper to request, the ref
 ChatGPT API recognize which is the title of the reference. 
 
 ### Requirement:
+Input file should be named as papers.txt. One paper in each line.
+
 OpenAI API key should be set as an environmental variable OPENAI_API_KEY
 
 Your email address should be set as an environmental variable EMAIL_ADDRESS. Alternatively, you may directly edit the code as follows
