@@ -51,7 +51,7 @@ def read_and_write(input_file, output_file):
     with open(input_file, 'r', encoding = 'utf-8') as in_file, open(output_file, 'w',encoding = 'utf-8') as out_file:
         for line in in_file:
             row = line.strip().split('::')
-            title = row[2].strip()
+            title = row[1].strip()
             #title = row[1].split(',')[1:]
             #title = ''.join(title)
             #title = title.strip()
@@ -63,8 +63,8 @@ def read_and_write(input_file, output_file):
 
 def main():
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    input_file = os.path.join(current_dir,'pubmed_ids_title.txt') # Your input file here.
-    output_file =os.path.join(current_dir,'pubmed_ids_newsearch_condition.txt') # Your output file here.
+    input_file = os.path.join(current_dir,'pubmed_title.txt') # Your input file here.
+    output_file =os.path.join(current_dir,'pubmed_ids_title.txt') # Your output file here.
 
     read_and_write(input_file, output_file)
 
