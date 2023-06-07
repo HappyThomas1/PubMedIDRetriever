@@ -12,12 +12,13 @@ pubmed_api = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pub
 crossref_api = "https://api.crossref.org/works/"
 opencitations_api = "https://opencitations.net/index/coci/api/v1/citations/"
 
-# メールアドレスを設定してください（Entrezの利用条件）
+# Your email here.
+# Entrez requires you to specify your email address with each request.
 Entrez.email = os.environ.get("EMAIL_ADDRESS")
 
 
 def get_paper_title_and_doi(pmid):
-    # pmidが数字出ない場合は、"Error"を返す
+    # get DOI
     if not pmid.isdigit():
         return "Error"
     
@@ -33,7 +34,6 @@ def get_paper_title_and_doi(pmid):
     return  paper_doi
 
 def get_citation_count(doi):
-    # doiが"Error"の場合は、"Error"を返す
     if doi == "Error":
         return "Error"
     # Send a request to the OpenCitations API
@@ -74,10 +74,9 @@ def extract_paper_title_from_text(text):
         return "No title found"
 
 def get_pubmed_id(title):
-    # title が "Not title found"でない場合のみ、PubMed IDを取得する
     if title == "No title found":
         return "No title found"
-    # title が "Error"でない場合のみ、PubMed IDを取得する
+    # Get pubmed ID only when the search result is not empty or error
     max_retries = 3
     for attempt in range(max_retries):
         try:
@@ -100,20 +99,20 @@ def get_pubmed_id(title):
     
 
 def main():
-# 同じディレクトリにあるpapers.txtファイルから論文を読み込む
+# Read  papers.txt
     current_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(current_dir, 'papers.txt')
     pubmed_ids = []
     doi_list = []
     citation_count_list = []
 
-# 各論文からタイトルを抽出し、そのタイトルを使ってPubMed IDを取得する
+# Extract titles
 
     with open(file_path, 'r',) as f:
         papers = f.read().split('\n')
         for paper in papers:
             #print(paper)
-            if paper:  # 空行を無視する
+            if paper:  
                 title = extract_paper_title_from_text(paper)
                 pubmed_id = get_pubmed_id(title)
                 pubmed_ids.append(pubmed_id)
@@ -127,7 +126,7 @@ def main():
                 except Exception as e:
                     print(f"An error occurred: {e}")
 
-# paper, pubmed_id, citation_countの結果をファイルに書き出す
+# paper, pubmed_id, citation_count
     out_file_path = os.path.join(current_dir, 'pubmed_ids.txt')
     with open(out_file_path, 'w') as f:
         for paper, pubmed_id, citation_count in zip(papers, pubmed_ids, citation_count_list):

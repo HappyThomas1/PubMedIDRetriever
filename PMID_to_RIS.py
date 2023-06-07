@@ -27,13 +27,13 @@ def fetch_pubmed_article(pubmed_id):
         url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id={pubmed_id}&retmode=xml"
         response = requests.get(url)
         
-        # ステータスコードが200以外の場合はエラーを発生させます
+        # Raise an error except when requests.get was successful
         if response.status_code != 200:
             raise ValueError(f"PubMed ID: {pubmed_id} not found.")
         
         soup = BeautifulSoup(response.content, "xml")
         
-        # 応答が空であるか、あるいは特定の要素（例えば'PubmedArticle'）が存在しない場合はエラーを発生させます
+        # Raise an error when the value was empty or not found
         if not soup or not soup.find('PubmedArticle'):
             raise ValueError(f"PubMed ID: {pubmed_id} not found or response not as expected.")
         
