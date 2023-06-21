@@ -51,9 +51,11 @@ def fetch_pubmed_article(pubmed_id):
 
 # 
 def convert_to_ris(soup, pubmed_id):
+    
     ris = "TY  - JOUR\n"
     title = soup.find("ArticleTitle").text
     ris += f"T1  - {title}\n"
+    ris += f"AN  - {pubmed_id}\n"
 
     authors = soup.find_all("Author")
     for author in authors:
@@ -72,6 +74,25 @@ def convert_to_ris(soup, pubmed_id):
         ris += f"JO  - {journal}\n"
     except:
         pass
+
+    try:
+        abstract = soup.find("Abstract").text
+        ris += f"AB  - {abstract}\n"
+    except:
+        pass
+    
+    try:
+        doi = soup.find("ELocationID").text
+        ris += f"DO  - {doi}\n"
+    except:
+        pass
+
+    try:
+        vol = soup.find("Volume").text
+        ris += f"VL  - {vol}\n"
+    except:
+        pass
+
 
     ris += f"UR  - https://pubmed.ncbi.nlm.nih.gov/{pubmed_id}/\n"
     ris += f"M1  - {pubmed_id}\n"
