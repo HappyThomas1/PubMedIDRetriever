@@ -13,7 +13,7 @@ from requests.exceptions import RequestException
 
 def extract_arabic_numerals(docx_path):
     doc = Document(docx_path)
-    pattern = r'\{(\d+)\}'
+    pattern = r'\{\s*(\d+)\s*\}'
     arabic_numerals = []
 
     for paragraph in doc.paragraphs:
@@ -53,50 +53,62 @@ def fetch_pubmed_article(pubmed_id):
 def convert_to_ris(soup, pubmed_id):
     
     ris = "TY  - JOUR\n"
-    title = soup.find("ArticleTitle").text
-    ris += f"T1  - {title}\n"
+    try:
+        title = soup.find("ArticleTitle").text
+        ris += f"T1  - {title}\n"
+        ris += f"TI  - {title}\n"
+    except:
+        print("No article title found")
+        ris += f"T1  - ""\n"
+        ris += f"TI  - ""\n"
+
+
     ris += f"AN  - {pubmed_id}\n"
 
-    authors = soup.find_all("Author")
-    for author in authors:
-        lastname = author.LastName.text
-        try:
+    try:
+        authors = soup.find_all("Author")
+        for author in authors:
+        
+            lastname = author.LastName.text
             firstname = author.ForeName.text
-        except:
-            firstname = ""
-        ris += f"AU  - {lastname}, {firstname}\n"
-
-    year = soup.find("PubDate").Year.text
-    ris += f"PY  - {year}\n"
-
+            ris += f"AU  - {lastname}, {firstname}\n"
+    except:
+        firstname = ""
+        ris += f"AU  - ""\n"
+    try:
+        year = soup.find("PubDate").Year.text
+        ris += f"PY  - {year}\n"
+    except:
+        ris += f"PY  - \n"
     try:
         journal = soup.find("Title").text
         ris += f"JO  - {journal}\n"
     except:
-        pass
+        ris += f"JO  - \n"
 
     try:
         abstract = soup.find("Abstract").text
         ris += f"AB  - {abstract}\n"
     except:
-        pass
+        ris += f"AB  - \n"
     
     try:
         doi = soup.find("ELocationID").text
         ris += f"DO  - {doi}\n"
     except:
-        pass
+        ris += f"DO  - \n"
 
     try:
         vol = soup.find("Volume").text
         ris += f"VL  - {vol}\n"
     except:
-        pass
+        ris += f"VL  - \n"
 
 
     ris += f"UR  - https://pubmed.ncbi.nlm.nih.gov/{pubmed_id}/\n"
     ris += f"M1  - {pubmed_id}\n"
     ris += "ER  - \n"
+
     return ris
 
 
