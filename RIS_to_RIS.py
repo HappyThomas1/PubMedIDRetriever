@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import filedialog
 import time
 import pandas as pd
+import re
 
 
 Entrez.email = os.getenv("EMAIL_ADDRESS")  # Please set your email address here.
@@ -78,62 +79,116 @@ def fetch_pubmed_data(doi):
     return None
 
 def convert_to_ris(soup, pubmed_id):
+    
     ris = "TY  - JOUR\n"
     try:
         title = soup.find("ArticleTitle").text
         ris += f"T1  - {title}\n"
         ris += f"TI  - {title}\n"
-    except AttributeError:
-        print(f"No ArticleTitle for PubMed ID: {pubmed_id}")
-        ris += f"T1  - ""\n"
-        ris += f"TI  - ""\n"
+    except:
+        print("No article title found")
+        ris += f"T1  - \n"
+        ris += f"TI  - \n"
 
     ris += f"AN  - {pubmed_id}\n"
 
-    
-    try:
-        authors = soup.find_all("Author")
+    authors = soup.find_all("Author")
+    if authors:
         for author in authors:
-            firstname = author.ForeName.text
-            lastname = author.LastName.text
-            ris += f"AU  - {lastname}, {firstname}\n"
-    except:
-        ris += f"AU  - ""\n"
-        
+            try:
+                lastname = author.LastName.text
+            except AttributeError:
+                lastname = ""
+            try:
+                firstname = author.ForeName.text
+            except AttributeError:
+                firstname = ""
+            ris += f"AU  - {lastname}, {firstname}\n" if lastname or firstname else "AU  - \n"
+    else:
+        ris += f"""AU  - \n"""
+
+
     try:
         year = soup.find("PubDate").Year.text
-        ris += f"PY  - {year}\n"
+        ris += f"""PY  - {year}\n"""
     except:
-        ris += f"PY  - ""\n"
+        try:
+            medline_date = soup.find("PubDate").MedlineDate.text
+            year_match = re.search(r'\d{4}', medline_date)
+            if year_match:
+                year = year_match.group()
+                ris += f"""PY  - {year}\n"""
+            else:
+                ris += f"""PY  - \n"""
+        except:
+            ris += f"""PY  - \n"""
 
+    try:
+        month = soup.find("PubDate").Month.text
+        ris += f"""DA  - {month}\n"""
+    except:
+        try:
+            medline_date = soup.find("PubDate").MedlineDate.text
+            ris += f"""DA  - {medline_date}\n"""
+        except:
+            ris += f"""DA  - \n"""
+
+
+    try:
+        page = soup.find("MedlinePgn").text
+        ris += f"""SP  - {page}\n"""
+    except:
+        ris += f"""SP  - \n"""
+    try:
+        issue = soup.find("Issue").text
+        ris += f"""IS  - {issue}\n"""
+    except:
+        ris += f"""IS  - \n"""
+ 
     try:
         journal = soup.find("Title").text
         ris += f"JO  - {journal}\n"
     except:
-        ris += f"JO  - ""\n"
+        ris += f"""JO  - \n"""
 
     try:
         abstract = soup.find("Abstract").text
-        ris += f"AB  - {abstract}\n"
+        ris += f"""AB  - {abstract}\n"""
     except:
-        ris += f"AB  - ""\n"
+        ris += f"""AB  - \n"""
+
+
+    keywords = soup.find_all("Keyword")
+    ris += f"""KY  - """
+    if keywords:
+        for keyword in keywords:
+            ris += f"""{keyword.text}\n"""
+    else:
+        ris += f"""\n"""
     
     try:
         doi = soup.find("ELocationID").text
-        ris += f"DO  - {doi}\n"
+        ris += f"""DO  - {doi}\n"""
     except:
-        ris += f"DO  - ""\n"
+        ris += f"""DO  - \n"""
+
+    try:
+        issn = soup.find("ISSN").text
+        ris += f"""SN  - {issn}\n"""
+    except:
+        ris += f"""SN  - \n"""
 
     try:
         vol = soup.find("Volume").text
-        ris += f"VL  - {vol}\n"
+        ris += f"""VL  - {vol}\n"""
     except:
-        ris += f"VL  - ""\n"
+        ris += f"""VL  - \n"""
 
 
     ris += f"UR  - https://pubmed.ncbi.nlm.nih.gov/{pubmed_id}/\n"
     ris += f"M1  - {pubmed_id}\n"
     ris += "ER  - \n"
+
     return ris
 
 def create_output_directory(input_file_path):
