@@ -131,7 +131,7 @@ def convert_to_ris(soup, pubmed_id):
 
 
     keywords = soup.find_all("Keyword")
-    ris += f"""KY  - """
+    ris += f"""KW  - """
     if keywords:
         for keyword in keywords:
             ris += f"""{keyword.text}\n"""
