@@ -79,7 +79,6 @@ def fetch_pubmed_data(doi):
     return None
 
 def convert_to_ris(soup, pubmed_id):
-    
     ris = "TY  - JOUR\n"
     try:
         title = soup.find("ArticleTitle").text
@@ -148,8 +147,10 @@ def convert_to_ris(soup, pubmed_id):
     try:
         journal = soup.find("Title").text
         ris += f"JO  - {journal}\n"
+        ris += f"T2  - {journal}\n"
     except:
         ris += f"""JO  - \n"""
+        ris += f"""T2  - \n"""
 
     try:
         abstract = soup.find("Abstract").text
@@ -188,6 +189,8 @@ def convert_to_ris(soup, pubmed_id):
     ris += f"UR  - https://pubmed.ncbi.nlm.nih.gov/{pubmed_id}/\n"
     ris += f"M1  - {pubmed_id}\n"
     ris += "ER  - \n"
+
+    return ris
 
     return ris
 

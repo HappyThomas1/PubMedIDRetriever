@@ -120,8 +120,10 @@ def convert_to_ris(soup, pubmed_id):
     try:
         journal = soup.find("Title").text
         ris += f"JO  - {journal}\n"
+        ris += f"T2  - {journal}\n"
     except:
         ris += f"""JO  - \n"""
+        ris += f"""T2  - \n"""
 
     try:
         abstract = soup.find("Abstract").text
