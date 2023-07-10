@@ -81,7 +81,7 @@ You need to set your email address as an environment variable for the Entrez mod
 Just run the script in Python. The script will open a file dialog where you can choose the input RIS file. The script will then extract all DOIs from the RIS file, fetch the related data from PubMed, and store the results in an output RIS file in a new directory named "output_ris_[input file name]" in the same directory as the script.
 
 ```
-python literature_reference_extractor.py
+python RIS_to_RIS.py
 ```
 
 ### Workflow
