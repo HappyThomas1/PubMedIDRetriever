@@ -99,3 +99,41 @@ The script follows these steps:
 The output is a RIS file named "combined.ris" stored in a directory named "output_ris_[input file name]" in the same location as the script. The RIS file contains the PubMed data for all DOIs extracted from the input file and their citing articles.
 
 The script also stores all DOIs it has processed in a CSV file named "all_dois.csv" in the same directory as the output file. This is to avoid fetching the data for the same DOI again if the script is run multiple times with the same input file.
+
+
+
+## BibTex_reformat.py
+
+This Python script is designed to convert BibTex files into a specified format. It takes a BibTex file as an input, parses it, and produces a formatted text file. It has a built-in GUI that you can use to select the file and an optional reverse order function.
+
+### Requirements
+
+This script is written in Python 3 and requires the following Python packages:
+
+- bibtexparser
+- tkinter
+- pylatexenc
+
+```
+pip install bibtexparser tkinter pylatexenc
+```
+
+### Usage
+
+To use this script, simply run it using Python. It will open a window with a "Open BibTex File" button that you can use to select your BibTex file. If you want the resulting formatted bibliography to be in reverse order, you can check the 'Reverse Order' checkbox.
+
+```
+python BibTex_to_Format.py
+```
+
+### Workflow
+
+1. Run the script to open the GUI.
+2. Click the "Open BibTex File" button and select your BibTex file from the dialog box.
+3. (Optional) If you want the resulting bibliography to be in reverse order, check the 'Reverse Order' box.
+4. The script will parse the BibTex file, format the entries according to the specified style, and write them to a file named 'formatted_bibliography.txt' in the same directory as the input file.
+
+This script is also capable of handling certain special LaTeX markups in the BibTex file, such as Greek alphabet symbols and superscripts.
+
+
+
