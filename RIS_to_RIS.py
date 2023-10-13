@@ -145,7 +145,10 @@ def convert_to_ris(soup, pubmed_id):
         ris += f"""IS  - \n"""
  
     try:
-        journal = soup.find("Title").text
+        journal = soup.find("ISOAbbreviation").text
+        if not journal:
+            journal = soup.find("Title").text
+            
         ris += f"JO  - {journal}\n"
         ris += f"T2  - {journal}\n"
     except:

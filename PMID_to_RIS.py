@@ -21,7 +21,8 @@ def extract_arabic_numerals(docx_path):
         arabic_numerals.extend(matches)
 
     return arabic_numerals
-
+# test example
+# https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=1638027&retmode=xml
 def fetch_pubmed_article(pubmed_id):
     try:
         url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id={pubmed_id}&retmode=xml"
@@ -118,7 +119,10 @@ def convert_to_ris(soup, pubmed_id):
         ris += f"""IS  - \n"""
  
     try:
-        journal = soup.find("Title").text
+        journal = soup.find("ISOAbbreviation").text
+        if not journal:
+            journal = soup.find("Title").text
+            
         ris += f"JO  - {journal}\n"
         ris += f"T2  - {journal}\n"
     except:
